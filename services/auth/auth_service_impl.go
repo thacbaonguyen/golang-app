@@ -45,7 +45,7 @@ func (a *AuthServiceImpl) Login(req request.LoginRequest) (response.AuthResponse
 
 	userResponse, err := utils.ToUserResponse(user)
 	if err != nil {
-		return response.AuthResponse{}, errors.New("cannot convert user to user response")
+		return response.AuthResponse{}, err
 	}
 
 	return response.AuthResponse{
@@ -55,13 +55,17 @@ func (a *AuthServiceImpl) Login(req request.LoginRequest) (response.AuthResponse
 }
 
 func (a *AuthServiceImpl) Register(req request.RegisterRequest) (response.AuthResponse, error) {
+	if req.Password != req.RetypePassword {
+		return response.AuthResponse{}, errors.New("password does not match")
+	}
+
 	_, err := a.userRepo.FindByUsername(req.Username)
-	if err != nil {
+	if err == nil {
 		return response.AuthResponse{}, errors.New("username already exist")
 	}
 
 	_, err = a.userRepo.FindByEmail(req.Email)
-	if err != nil {
+	if err == nil {
 		return response.AuthResponse{}, errors.New("email already exist")
 	}
 

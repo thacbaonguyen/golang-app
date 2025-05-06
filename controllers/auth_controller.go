@@ -29,13 +29,15 @@ func (a *authController) Login(c *gin.Context) {
 	}
 
 	if err := utils.ValidateStruct(loginRequest); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed", err.Error())
+		errors := utils.GetValidationErrors(err)
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed", errors)
 		return
 	}
 
 	authResponse, err := a.authService.Login(loginRequest)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "Authentication failed", err.Error())
+		errors := utils.GetValidationErrors(err)
+		utils.ErrorResponse(c, http.StatusUnauthorized, "Authentication failed", errors)
 		return
 	}
 	utils.SuccessResponse(c, http.StatusOK, "Login successfully", authResponse)
@@ -43,13 +45,14 @@ func (a *authController) Login(c *gin.Context) {
 
 func (a *authController) Register(c *gin.Context) {
 	var registerRequest request.RegisterRequest
-	if err := c.ShouldBindJSON(registerRequest); err != nil {
+	if err := c.ShouldBindJSON(&registerRequest); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request", err.Error())
 		return
 	}
 
 	if err := utils.ValidateStruct(registerRequest); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed", err.Error())
+		errors := utils.GetValidationErrors(err)
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed", errors)
 		return
 	}
 

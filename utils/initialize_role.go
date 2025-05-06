@@ -7,7 +7,7 @@ import (
 )
 
 func InitializeRoles(db *gorm.DB) error {
-	defaultRoles := []models.Role{
+	defaultRoles := []*models.Role{
 		{Name: "user"},
 		{Name: "admin"},
 	}

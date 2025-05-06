@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"go-ginapp/data/response"
 	"go-ginapp/models"
@@ -16,10 +17,22 @@ func ToUserResponse(user models.User) (response.UserResponse, error) {
 		TagName: "json",
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
 			func(from, to reflect.Type, data interface{}) (interface{}, error) {
+
+				if from == reflect.TypeOf(&time.Time{}) && to == reflect.TypeOf("") {
+					if t, ok := data.(*time.Time); ok {
+						if t == nil {
+							return "", nil
+						}
+						return t.Format("2006-01-02 15:04:05"), nil
+					}
+				}
 				if from == reflect.TypeOf(time.Time{}) && to == reflect.TypeOf("") {
 					if t, ok := data.(time.Time); ok {
 						return t.Format("2006-01-02 15:04:05"), nil
 					}
+				}
+				if from == reflect.TypeOf(map[string]interface{}{}) && to == reflect.TypeOf("") {
+					return "", nil
 				}
 				return data, nil
 			},
@@ -28,6 +41,7 @@ func ToUserResponse(user models.User) (response.UserResponse, error) {
 	if err != nil {
 		return response.UserResponse{}, err
 	}
+	fmt.Printf("oke 1")
 	if err := decoder.Decode(user); err != nil {
 		return response.UserResponse{}, err
 	}
@@ -43,8 +57,8 @@ func ToPostResponse(post models.Post) (response.PostResponse, error) {
 		TagName: "json",
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
 			func(from, to reflect.Type, data interface{}) (interface{}, error) {
-				if from == reflect.TypeOf(time.Time{}) && to == reflect.TypeOf("") {
-					if t, ok := data.(time.Time); ok {
+				if from == reflect.TypeOf(&time.Time{}) && to == reflect.TypeOf("") {
+					if t, ok := data.(*time.Time); ok {
 						return t.Format(time.DateTime), nil
 					}
 				}

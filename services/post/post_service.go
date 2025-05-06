@@ -10,6 +10,6 @@ type PostService interface {
 	GetPostById(id uint) (response.PostResponse, error)
 	GetPostByAuthor(userId uint) ([]response.PostResponse, error)
 	CreatePost(request request.CreatePostRequest, userId uint) (response.PostResponse, error)
-	UpdatePost(postRequest request.UpdatePostRequest, postId uint) (response.PostResponse, error)
+	UpdatePost(postRequest request.UpdatePostRequest, postId uint, userId uint) (response.PostResponse, error)
 	DeletePost(id uint) error
 }

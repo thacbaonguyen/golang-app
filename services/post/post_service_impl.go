@@ -1,6 +1,7 @@
 package post
 
 import (
+	"errors"
 	"go-ginapp/data/request"
 	"go-ginapp/data/response"
 	"go-ginapp/models"
@@ -64,10 +65,13 @@ func (p *PostServiceImpl) CreatePost(request request.CreatePostRequest, userId u
 	return postResponse, nil
 }
 
-func (p *PostServiceImpl) UpdatePost(postRequest request.UpdatePostRequest, postId uint) (response.PostResponse, error) {
+func (p *PostServiceImpl) UpdatePost(postRequest request.UpdatePostRequest, postId uint, userId uint) (response.PostResponse, error) {
 	post, err := p.postRepo.FindById(postId)
 	if err != nil {
 		return response.PostResponse{}, err
+	}
+	if post.UserId != userId {
+		return response.PostResponse{}, errors.New("you does not have permission to change this post")
 	}
 	post.Title = postRequest.Title
 	post.Content = postRequest.Content

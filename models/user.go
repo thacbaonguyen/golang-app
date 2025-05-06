@@ -14,7 +14,7 @@ type User struct {
 	RoleId    uint           `json:"role_id"`
 	Role      Role           `gorm:"foreignKey:RoleId" json:"role,omitempty"`
 	Posts     []Post         `gorm:"foreignKey:UserId" json:"posts,omitempty"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt *time.Time     `gorm:"type:timestamptz" json:"created_at"`
+	UpdatedAt *time.Time     `gorm:"type:timestamptz" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }

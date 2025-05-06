@@ -30,7 +30,7 @@ func LoadConfig() *Config {
 	}
 
 	config := &Config{
-		DBhost:     getEnv("DB_PORT"),
+		DBhost:     getEnv("DB_HOST"),
 		DBport:     getEnv("DB_PORT"),
 		DBuser:     getEnv("DB_USER"),
 		DBpassword: getEnv("DB_PASSWORD"),

@@ -8,6 +8,9 @@ import (
 
 func SetupRoutes(router *gin.Engine,
 	authController controllers.AuthController,
+	userController controllers.UserController,
+	postController controllers.PostController,
+	authMiddleware middleware.AuthMiddleware,
 ) {
 
 	router.Use(middleware.CORS())
@@ -28,16 +31,28 @@ func SetupRoutes(router *gin.Engine,
 			auth.POST("/register", authController.Register)
 		}
 
-		//users := v1.Group("/users")
-		//{
-		//	users.POST("/login", authController.Login)
-		//	users.POST("/register", authController.Register)
-		//}
-		//
-		//posts := v1.Group("/posts")
-		//{
-		//	posts.POST("/login", authController.Login)
-		//	posts.POST("/register", authController.Register)
-		//}
+		users := v1.Group("/users")
+		{
+			users.GET("/:id", userController.GetUserByID)
+			users.Use(authMiddleware.AuthRequired())
+			users.GET("/all", userController.GetAllUsers)
+			users.GET("/me", userController.GetCurrentUser)
+			users.PUT("/update", userController.UpdateUser)
+			users.PUT("/update/password", userController.ChangePassword)
+			users.DELETE("/delete/:userId", userController.DeleteUser)
+		}
+
+		posts := v1.Group("/posts")
+		{
+			// public
+			posts.GET("/all", postController.GetAllPosts)
+			posts.GET("/:postId", postController.GetPostByID)
+			posts.GET("/user/:userId", postController.GetPostsByUser)
+			//protect
+			posts.Use(authMiddleware.AdminRequired())
+			posts.POST("/create", postController.CreatePost)
+			posts.PUT("/update/:postId", postController.UpdatePost)
+			posts.DELETE("/delete/:postId", postController.DeletePost)
+		}
 	}
 }

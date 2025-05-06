@@ -1,7 +1,7 @@
 ## just a go project using the gin framework, with a simple module
 
 #### env file
-```text
+```dotenv
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
